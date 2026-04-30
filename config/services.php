@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'abstract' => [
+        'email_reputation_key' => env('ABSTRACT_EMAIL_REPUTATION_KEY'),
+    ],
+
+    'tally' => [
+        'webhook_secret' => env('TALLY_WEBHOOK_SECRET'),
+    ],
+
 ];
