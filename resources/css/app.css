@@ -5,36 +5,72 @@
 @tailwind utilities;
 
 :root {
-    --asat-ink: #17233b;
+    --asat-ink: #172033;
     --asat-muted: #64748b;
-    --asat-line: #d9e2ec;
+    --asat-line: #d8e2ea;
     --asat-paper: #ffffff;
-    --asat-page: #f4f7fb;
-    --asat-navy: #183153;
-    --asat-teal: #0f766e;
-    --asat-gold: #c99728;
+    --asat-page: #f3f6f8;
+    --asat-navy: #12324f;
+    --asat-navy-deep: #0b2037;
+    --asat-teal: #08756f;
+    --asat-gold: #bf8b24;
+    --asat-sky: #2f80a7;
     --asat-red: #b42318;
-    --asat-green: #157347;
+    --asat-green: #13795b;
+    --asat-clay: #9d5a3c;
+}
+
+* {
+    letter-spacing: 0 !important;
+}
+
+html {
+    min-height: 100%;
 }
 
 body {
+    min-height: 100vh;
     color: var(--asat-ink);
     background:
-        linear-gradient(180deg, #eef6f6 0, #f7fafc 310px, var(--asat-page) 100%),
-        repeating-linear-gradient(135deg, rgba(24, 49, 83, .04) 0, rgba(24, 49, 83, .04) 1px, transparent 1px, transparent 18px);
+        linear-gradient(180deg, rgba(18, 50, 79, .08), transparent 340px),
+        linear-gradient(90deg, rgba(8, 117, 111, .055) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 117, 111, .045) 1px, transparent 1px),
+        var(--asat-page);
+    background-size: auto, 44px 44px, 44px 44px, auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+input,
+select,
+textarea {
+    border-radius: 7px !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--asat-teal) !important;
+    box-shadow: 0 0 0 4px rgba(8, 117, 111, .12) !important;
 }
 
 .asat-shell {
     min-height: 100vh;
     background:
-        linear-gradient(180deg, rgba(15, 118, 110, .08), transparent 280px),
-        var(--asat-page);
+        linear-gradient(180deg, rgba(255, 255, 255, .55), transparent 340px),
+        transparent;
 }
 
 .asat-nav {
-    border-bottom: 1px solid rgba(24, 49, 83, .12);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid rgba(18, 50, 79, .12);
     background: rgba(255, 255, 255, .96);
-    box-shadow: 0 8px 28px rgba(24, 49, 83, .06);
+    box-shadow: 0 10px 28px rgba(18, 50, 79, .08);
+    backdrop-filter: blur(14px);
 }
 
 .asat-brand-mark {
@@ -42,66 +78,184 @@ body {
     width: 42px;
     height: 42px;
     place-items: center;
-    border-radius: 10px;
-    background: var(--asat-navy);
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 8px;
+    background:
+        linear-gradient(135deg, var(--asat-navy), var(--asat-teal) 58%, var(--asat-gold));
     color: #fff;
-    font-weight: 800;
+    font-weight: 900;
+    line-height: 1;
+    box-shadow: 0 12px 24px rgba(18, 50, 79, .22);
 }
 
 .asat-brand-title {
     color: var(--asat-ink);
-    font-size: .95rem;
-    font-weight: 800;
+    font-size: .98rem;
+    font-weight: 900;
     line-height: 1;
 }
 
 .asat-brand-subtitle {
     color: var(--asat-muted);
-    font-size: .72rem;
-    font-weight: 600;
-    letter-spacing: .02em;
+    font-size: .73rem;
+    font-weight: 700;
 }
 
 .asat-page-header {
-    border-bottom: 1px solid rgba(24, 49, 83, .10);
+    border-bottom: 1px solid rgba(18, 50, 79, .10);
     background:
-        linear-gradient(90deg, rgba(24, 49, 83, .08), rgba(15, 118, 110, .07), rgba(201, 151, 40, .08)),
-        #fff;
+        linear-gradient(90deg, rgba(18, 50, 79, .08), rgba(8, 117, 111, .08), rgba(191, 139, 36, .10)),
+        rgba(255, 255, 255, .92);
 }
 
 .asat-page-title {
     color: var(--asat-ink);
-    font-size: 1.4rem;
-    font-weight: 800;
+    font-size: clamp(1.25rem, 2vw, 1.65rem);
+    font-weight: 900;
     line-height: 1.2;
+}
+
+.asat-page-kicker {
+    color: var(--asat-teal);
+    font-size: .75rem;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
 .asat-section {
     padding-top: 2rem;
-    padding-bottom: 2.5rem;
+    padding-bottom: 2.75rem;
 }
 
 .asat-card {
     overflow: hidden;
-    border: 1px solid rgba(24, 49, 83, .10);
+    border: 1px solid rgba(18, 50, 79, .11);
     border-radius: 8px;
     background: var(--asat-paper);
-    box-shadow: 0 16px 40px rgba(24, 49, 83, .08);
+    box-shadow: 0 18px 45px rgba(18, 50, 79, .09);
 }
 
-.asat-card-muted {
-    border: 1px solid rgba(24, 49, 83, .10);
+.asat-card-header {
+    border-bottom: 1px solid rgba(18, 50, 79, .10);
+    background:
+        linear-gradient(90deg, rgba(8, 117, 111, .07), rgba(47, 128, 167, .04)),
+        #fff;
+    padding: 1.25rem 1.5rem;
+}
+
+.asat-panel {
+    border: 1px solid rgba(18, 50, 79, .10);
     border-radius: 8px;
-    background: #f8fbfd;
+    background: rgba(255, 255, 255, .78);
+}
+
+.asat-hero {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(18, 50, 79, .12);
+    border-radius: 8px;
+    background:
+        linear-gradient(135deg, rgba(18, 50, 79, .97), rgba(8, 117, 111, .91)),
+        var(--asat-navy);
+    color: #fff;
+    box-shadow: 0 22px 55px rgba(18, 50, 79, .18);
+}
+
+.asat-hero::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background:
+        linear-gradient(90deg, transparent 0 74%, rgba(255, 255, 255, .08) 74% 74.5%, transparent 74.5%),
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, .08) 0, rgba(255, 255, 255, .08) 1px, transparent 1px, transparent 18px);
+    pointer-events: none;
+}
+
+.asat-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+.asat-hero-title {
+    max-width: 760px;
+    font-size: clamp(1.65rem, 3vw, 2.7rem);
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.asat-hero-copy {
+    max-width: 660px;
+    color: rgba(255, 255, 255, .84);
+}
+
+.asat-button {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    border-radius: 7px;
+    padding: .65rem 1rem;
+    font-size: .75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
+}
+
+.asat-button:hover {
+    transform: translateY(-1px);
+}
+
+.asat-button-primary,
+.asat-action-primary {
+    border: 1px solid rgba(18, 50, 79, .12);
+    background: var(--asat-navy) !important;
+    color: #fff !important;
+    box-shadow: 0 12px 22px rgba(18, 50, 79, .18);
+}
+
+.asat-button-primary:hover,
+.asat-action-primary:hover {
+    background: var(--asat-navy-deep) !important;
+}
+
+.asat-button-secondary {
+    border: 1px solid rgba(18, 50, 79, .18);
+    background: #fff;
+    color: var(--asat-ink);
+}
+
+.asat-button-secondary:hover {
+    border-color: rgba(8, 117, 111, .36);
+    background: #f8fbfb;
+}
+
+.asat-button-danger {
+    border: 1px solid rgba(180, 35, 24, .28);
+    background: #fff;
+    color: var(--asat-red);
+}
+
+.asat-button-danger:hover {
+    background: #fff1f0;
+}
+
+.asat-alert-success {
+    border: 1px solid rgba(19, 121, 91, .22);
+    border-radius: 8px;
+    background: #ecfdf5;
+    color: #126047;
 }
 
 .asat-stat {
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(24, 49, 83, .10);
+    min-height: 116px;
+    border: 1px solid rgba(18, 50, 79, .11);
     border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 12px 30px rgba(24, 49, 83, .07);
+    background:
+        linear-gradient(180deg, #fff, #f9fbfc);
+    box-shadow: 0 14px 32px rgba(18, 50, 79, .08);
 }
 
 .asat-stat::before {
@@ -120,41 +274,67 @@ body {
     background: var(--asat-red);
 }
 
+.asat-stat.is-sky::before {
+    background: var(--asat-sky);
+}
+
+.asat-stat-icon {
+    display: inline-grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 8px;
+    background: rgba(8, 117, 111, .12);
+    color: var(--asat-teal);
+}
+
+.asat-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
 .asat-table thead {
     background: #eef5f7;
 }
 
 .asat-table th {
     color: #334155;
-    font-weight: 800;
-    letter-spacing: .04em;
+    font-weight: 900;
+}
+
+.asat-table td {
+    vertical-align: middle;
+}
+
+.asat-table tbody tr {
+    transition: background-color .15s ease;
 }
 
 .asat-table tbody tr:hover {
-    background: #f8fbfd;
+    background: #f7fbfc;
 }
 
 .asat-badge {
     display: inline-flex;
+    min-width: 84px;
     align-items: center;
-    min-width: 82px;
     justify-content: center;
     border-radius: 999px;
-    padding: .28rem .65rem;
+    padding: .3rem .7rem;
     font-size: .75rem;
-    font-weight: 800;
+    font-weight: 900;
 }
 
 .asat-badge-pending {
-    border: 1px solid rgba(201, 151, 40, .35);
-    background: #fff8e6;
-    color: #7a560c;
+    border: 1px solid rgba(191, 139, 36, .35);
+    background: #fff7df;
+    color: #76540f;
 }
 
 .asat-badge-approved {
-    border: 1px solid rgba(21, 115, 71, .28);
-    background: #eaf7ef;
-    color: #13633e;
+    border: 1px solid rgba(19, 121, 91, .28);
+    background: #e8f7f0;
+    color: #11654c;
 }
 
 .asat-badge-rejected {
@@ -163,34 +343,836 @@ body {
     color: #9f2016;
 }
 
-.asat-action-primary {
-    background: var(--asat-navy) !important;
+.asat-status-dot {
+    display: inline-block;
+    width: .55rem;
+    height: .55rem;
+    border-radius: 999px;
+    background: currentColor;
 }
 
-.asat-action-primary:hover {
-    background: #0f223c !important;
+.asat-empty {
+    border: 1px dashed rgba(18, 50, 79, .22);
+    border-radius: 8px;
+    background: #f8fbfc;
+    padding: 2rem;
+    text-align: center;
+}
+
+.asat-feed-item {
+    border-left: 4px solid rgba(8, 117, 111, .28);
+    padding: 1rem 1.25rem;
+}
+
+.asat-feed-item.is-unread {
+    border-left-color: var(--asat-teal);
+    background: #f6fbfa;
+}
+
+.asat-module-row {
+    border: 1px solid rgba(18, 50, 79, .10);
+    border-radius: 8px;
+    background: #fff;
+    padding: 1rem;
 }
 
 .asat-auth-shell {
     min-height: 100vh;
     background:
-        linear-gradient(135deg, rgba(24, 49, 83, .94), rgba(15, 118, 110, .90)),
-        repeating-linear-gradient(135deg, rgba(255, 255, 255, .08) 0, rgba(255, 255, 255, .08) 1px, transparent 1px, transparent 22px);
+        linear-gradient(135deg, rgba(11, 32, 55, .96), rgba(8, 117, 111, .90)),
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, .09) 0, rgba(255, 255, 255, .09) 1px, transparent 1px, transparent 22px);
 }
 
 .asat-auth-panel {
-    border: 1px solid rgba(255, 255, 255, .18);
+    border: 1px solid rgba(255, 255, 255, .20);
     border-radius: 8px;
-    background: rgba(255, 255, 255, .96);
-    box-shadow: 0 28px 70px rgba(2, 8, 23, .25);
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 32px 78px rgba(2, 8, 23, .28);
 }
 
 .asat-auth-copy {
-    color: rgba(255, 255, 255, .92);
+    color: rgba(255, 255, 255, .94);
 }
 
-input,
-select,
-textarea {
-    border-radius: 7px !important;
+.asat-auth-visual {
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .10);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+
+.asat-mini-window {
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .94);
+    color: var(--asat-ink);
+}
+
+body.asat-public-page {
+    overflow-x: hidden;
+    background:
+        linear-gradient(180deg, #ecf4f5 0, #f5f8fa 16%, #ffffff 50%, #f7fbfb 100%);
+}
+
+.asat-landing-shell {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top right, rgba(8, 117, 111, .12), transparent 28%),
+        linear-gradient(180deg, rgba(18, 50, 79, .06), transparent 220px),
+        linear-gradient(90deg, rgba(18, 50, 79, .04) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 117, 111, .035) 1px, transparent 1px),
+        transparent;
+    background-size: auto, auto, 48px 48px, 48px 48px, auto;
+}
+
+.asat-landing-nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    border-bottom: 1px solid rgba(18, 50, 79, .08);
+    background: rgba(255, 255, 255, .84);
+    backdrop-filter: blur(18px);
+}
+
+.asat-landing-menu {
+    min-width: 0;
+}
+
+.asat-landing-link,
+.asat-landing-footer-link {
+    color: #475569;
+    font-size: .82rem;
+    font-weight: 800;
+    transition: color .18s ease;
+}
+
+.asat-landing-link:hover,
+.asat-landing-footer-link:hover {
+    color: var(--asat-teal);
+}
+
+.asat-landing-hero {
+    padding: clamp(4rem, 7vw, 6rem) 0 3.5rem;
+}
+
+.asat-landing-copy {
+    max-width: 42rem;
+}
+
+.asat-landing-kicker {
+    margin-bottom: .85rem;
+    color: var(--asat-teal);
+    font-size: .8rem;
+    font-weight: 900;
+    letter-spacing: .08em !important;
+    text-transform: uppercase;
+}
+
+.asat-landing-title {
+    max-width: 12ch;
+    margin: 0;
+    color: var(--asat-ink);
+    font-size: clamp(2.5rem, 5vw, 4.6rem);
+    font-weight: 900;
+    line-height: .98;
+}
+
+.asat-landing-description {
+    max-width: 39rem;
+    margin-top: 1.35rem;
+    color: #526277;
+    font-size: 1.04rem;
+    line-height: 1.8;
+}
+
+.asat-landing-proof {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+}
+
+.asat-landing-proof span {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(18, 50, 79, .09);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .92);
+    padding: .62rem .9rem;
+    color: #445469;
+    font-size: .76rem;
+    font-weight: 900;
+    box-shadow: 0 10px 24px rgba(18, 50, 79, .05);
+}
+
+.asat-landing-visual {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(18, 50, 79, .09);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(244, 249, 250, .98));
+    padding: 1.5rem;
+    box-shadow: 0 28px 65px rgba(18, 50, 79, .10);
+}
+
+.asat-landing-visual::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background:
+        linear-gradient(120deg, transparent 0 70%, rgba(8, 117, 111, .06) 70% 71%, transparent 71%),
+        linear-gradient(0deg, transparent 0 82%, rgba(18, 50, 79, .05) 82% 82.5%, transparent 82.5%);
+    pointer-events: none;
+}
+
+.asat-landing-visual > * {
+    position: relative;
+    z-index: 1;
+}
+
+.asat-landing-visual-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.asat-landing-visual-kicker {
+    margin: 0 0 .35rem;
+    color: var(--asat-sky);
+    font-size: .76rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.asat-landing-visual-title {
+    margin: 0;
+    color: var(--asat-ink);
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+.asat-landing-flow {
+    display: grid;
+    gap: .8rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-bottom: 1rem;
+}
+
+.asat-landing-flow-step {
+    min-height: 104px;
+    border: 1px solid rgba(18, 50, 79, .08);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .78);
+    padding: .95rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+}
+
+.asat-landing-flow-step strong {
+    display: inline-flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(8, 117, 111, .11);
+    color: var(--asat-teal);
+    font-size: .78rem;
+    font-weight: 900;
+}
+
+.asat-landing-flow-step span {
+    display: block;
+    margin-top: .9rem;
+    color: #334155;
+    font-size: .92rem;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.asat-landing-preview {
+    border: 1px solid rgba(18, 50, 79, .08);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .86);
+    padding: 1rem;
+}
+
+.asat-landing-preview-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.asat-landing-preview-row h3 {
+    margin: .1rem 0 0;
+    color: var(--asat-ink);
+    font-size: 1.16rem;
+    font-weight: 900;
+}
+
+.asat-landing-preview-label {
+    margin: 0;
+    color: #64748b;
+    font-size: .74rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.asat-landing-mini {
+    height: 100%;
+    border: 1px solid rgba(18, 50, 79, .07);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, #ffffff, #f7fbfc);
+    padding: .95rem;
+}
+
+.asat-landing-mini p {
+    margin: 0 0 .3rem;
+    color: var(--asat-ink);
+    font-size: .9rem;
+    font-weight: 900;
+}
+
+.asat-landing-mini span {
+    color: #64748b;
+    font-size: .82rem;
+    line-height: 1.55;
+}
+
+.asat-landing-section {
+    padding: 1.4rem 0 4rem;
+}
+
+.asat-landing-section-alt {
+    padding-top: .6rem;
+}
+
+.asat-landing-section-head {
+    max-width: 40rem;
+    margin-bottom: 2rem;
+}
+
+.asat-landing-section-head h2,
+.asat-landing-story h2,
+.asat-landing-architecture h3,
+.asat-landing-faq h3,
+.asat-landing-feature h3 {
+    color: var(--asat-ink);
+}
+
+.asat-landing-section-head h2,
+.asat-landing-story h2 {
+    margin-bottom: .75rem;
+    font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+    font-weight: 900;
+}
+
+.asat-landing-section-head p:last-child,
+.asat-landing-story p {
+    color: #5d6d81;
+    line-height: 1.8;
+}
+
+.asat-landing-feature,
+.asat-landing-story,
+.asat-landing-stat,
+.asat-landing-architecture,
+.asat-landing-faq {
+    height: 100%;
+    border: 1px solid rgba(18, 50, 79, .08);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .92);
+    box-shadow: 0 18px 40px rgba(18, 50, 79, .06);
+}
+
+.asat-landing-feature,
+.asat-landing-story,
+.asat-landing-architecture,
+.asat-landing-faq {
+    padding: 1.35rem;
+}
+
+.asat-landing-feature h3,
+.asat-landing-faq h3 {
+    margin-bottom: .65rem;
+    font-size: 1.04rem;
+    font-weight: 900;
+}
+
+.asat-landing-feature p,
+.asat-landing-faq p {
+    margin-bottom: 0;
+    color: #5d6d81;
+    line-height: 1.75;
+}
+
+.asat-landing-story p:last-child {
+    margin-bottom: 0;
+}
+
+.asat-landing-stat {
+    display: flex;
+    min-height: 160px;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.25rem;
+    text-align: left;
+}
+
+.asat-landing-stat span {
+    color: var(--asat-navy);
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1;
+}
+
+.asat-landing-stat p {
+    margin: .7rem 0 0;
+    color: #64748b;
+    font-size: .82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.asat-landing-architecture h3 {
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+    font-weight: 900;
+}
+
+.asat-landing-architecture-grid {
+    display: grid;
+    gap: .75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.asat-landing-architecture-grid span {
+    border: 1px solid rgba(8, 117, 111, .12);
+    border-radius: 8px;
+    background: rgba(8, 117, 111, .06);
+    padding: .85rem;
+    color: #234154;
+    font-size: .84rem;
+    font-weight: 800;
+    text-align: center;
+}
+
+.asat-landing-footer {
+    border-top: 1px solid rgba(18, 50, 79, .08);
+    background: rgba(255, 255, 255, .72);
+    padding: 1.4rem 0 2rem;
+}
+
+@media (max-width: 991.98px) {
+    .asat-landing-hero {
+        padding-top: 3.1rem;
+    }
+
+    .asat-landing-title {
+        max-width: 100%;
+    }
+
+    .asat-landing-flow {
+        grid-template-columns: 1fr;
+    }
+
+    .asat-landing-flow-step {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .asat-landing-nav .asat-brand-subtitle {
+        display: none;
+    }
+
+    .asat-landing-hero {
+        padding-top: 2.4rem;
+    }
+
+    .asat-landing-description {
+        font-size: .97rem;
+    }
+
+    .asat-landing-proof span {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .asat-landing-visual,
+    .asat-landing-feature,
+    .asat-landing-story,
+    .asat-landing-stat,
+    .asat-landing-architecture,
+    .asat-landing-faq {
+        padding: 1rem;
+    }
+
+    .asat-landing-preview-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .asat-landing-architecture-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.asat-public-shell {
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    height: 100svh;
+    flex-direction: column;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(11, 32, 55, .98), rgba(8, 117, 111, .91)),
+        linear-gradient(90deg, rgba(255, 255, 255, .055) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255, 255, 255, .045) 1px, transparent 1px),
+        var(--asat-navy);
+    background-size: auto, 48px 48px, 48px 48px, auto;
+}
+
+.asat-public-shell::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background:
+        linear-gradient(115deg, transparent 0 54%, rgba(255, 255, 255, .08) 54% 54.35%, transparent 54.35%),
+        linear-gradient(115deg, transparent 0 69%, rgba(191, 139, 36, .16) 69% 69.45%, transparent 69.45%),
+        linear-gradient(115deg, transparent 0 82%, rgba(255, 255, 255, .06) 82% 82.3%, transparent 82.3%);
+    pointer-events: none;
+}
+
+.asat-public-nav {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 72px;
+    border-bottom: 1px solid rgba(255, 255, 255, .16);
+    color: #fff;
+    background: rgba(3, 18, 32, .12);
+    backdrop-filter: blur(10px);
+}
+
+.asat-public-main {
+    position: relative;
+    z-index: 1;
+    min-height: 0;
+    flex: 1;
+}
+
+.asat-public-hero {
+    height: 100%;
+    color: #fff;
+}
+
+.asat-public-copy {
+    transform: translateY(-1.4rem);
+}
+
+.asat-public-proof {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+}
+
+.asat-public-proof span {
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .09);
+    padding: .45rem .75rem;
+    color: rgba(255, 255, 255, .82);
+    font-size: .78rem;
+    font-weight: 900;
+}
+
+.asat-public-board {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid rgba(255, 255, 255, .16);
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, .105), rgba(255, 255, 255, .03) 72%, transparent);
+    padding: clamp(1rem, 3vw, 2rem);
+    transform: translateY(-1.4rem);
+}
+
+.asat-public-board-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.asat-public-card {
+    border: 1px solid rgba(18, 50, 79, .10);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 16px 38px rgba(18, 50, 79, .10);
+}
+
+.asat-workflow-panel {
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .105), rgba(255, 255, 255, .06));
+    padding: 1rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .10);
+}
+
+.asat-flow {
+    display: grid;
+    gap: .75rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.asat-flow-step {
+    position: relative;
+    min-height: 94px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .075);
+    padding: .95rem;
+}
+
+.asat-flow-step::after {
+    position: absolute;
+    top: 50%;
+    right: -.52rem;
+    width: .52rem;
+    height: 1px;
+    content: "";
+    background: rgba(255, 255, 255, .24);
+}
+
+.asat-flow-step:last-child::after {
+    display: none;
+}
+
+.asat-flow-step span {
+    display: inline-grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 999px;
+    background: rgba(191, 139, 36, .26);
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 900;
+}
+
+.asat-flow-step p {
+    margin: .7rem 0 0;
+    color: rgba(255, 255, 255, .88);
+    font-size: .9rem;
+    font-weight: 900;
+    line-height: 1.25;
+}
+
+.asat-workflow-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: .75rem;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .075);
+    padding: .95rem;
+    transition: background-color .16s ease, border-color .16s ease;
+}
+
+.asat-workflow-row:hover {
+    border-color: rgba(255, 255, 255, .24);
+    background: rgba(255, 255, 255, .105);
+}
+
+.asat-public-chip {
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .09);
+    padding: .85rem;
+}
+
+.asat-public-chip p {
+    margin: 0;
+    color: rgba(255, 255, 255, .68);
+    font-size: .72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.asat-public-chip span {
+    display: block;
+    margin-top: .2rem;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.asat-password-wrap {
+    position: relative;
+}
+
+.asat-password-wrap input {
+    padding-right: 3rem;
+}
+
+.asat-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: .75rem;
+    display: inline-flex;
+    width: 1.9rem;
+    height: 1.9rem;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #64748b;
+    transform: translateY(-50%);
+    transition: color .18s ease, background-color .18s ease;
+}
+
+.asat-password-toggle:hover {
+    background: rgba(8, 117, 111, .08);
+    color: var(--asat-teal);
+}
+
+.asat-password-toggle:focus-visible {
+    outline: 2px solid rgba(8, 117, 111, .34);
+    outline-offset: 2px;
+}
+
+.asat-password-toggle svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.asat-password-hint {
+    margin-top: .85rem;
+    border: 1px solid rgba(18, 50, 79, .08);
+    border-radius: 8px;
+    background: #f8fbfc;
+    padding: .85rem .95rem;
+}
+
+.asat-password-hint-title {
+    margin: 0 0 .55rem;
+    color: #475569;
+    font-size: .72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.asat-password-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.asat-password-check {
+    display: inline-flex;
+    align-items: center;
+    gap: .38rem;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, .14);
+    padding: .38rem .68rem;
+    color: #64748b;
+    font-size: .77rem;
+    font-weight: 800;
+}
+
+.asat-password-check::before {
+    width: .5rem;
+    height: .5rem;
+    border-radius: 999px;
+    background: currentColor;
+    content: "";
+    opacity: .45;
+}
+
+.asat-password-check.is-met {
+    background: rgba(19, 121, 91, .12);
+    color: var(--asat-green);
+}
+
+@media (max-width: 640px) {
+    .asat-section {
+        padding-top: 1.25rem;
+    }
+
+    .asat-card-header {
+        padding: 1rem;
+    }
+
+    .asat-button {
+        width: 100%;
+    }
+
+    .asat-public-page .asat-brand-subtitle,
+    .asat-public-board-head p,
+    .asat-public-chip,
+    .asat-public-proof {
+        display: none;
+    }
+
+    .asat-public-hero {
+        align-content: center;
+        gap: 1rem;
+    }
+
+    .asat-public-copy,
+    .asat-public-board {
+        transform: translateY(-.5rem);
+    }
+
+    .asat-public-board {
+        align-self: auto;
+        border-left: 0;
+        border-top: 1px solid rgba(255, 255, 255, .14);
+        padding: .85rem 0 0;
+    }
+
+    .asat-workflow-panel {
+        padding: .9rem;
+    }
+
+    .asat-flow {
+        grid-template-columns: 1fr;
+        gap: .5rem;
+    }
+
+    .asat-flow-step {
+        min-height: auto;
+        padding: .65rem .75rem;
+    }
+
+    .asat-flow-step::after {
+        display: none;
+    }
+
+    .asat-flow-step p {
+        display: inline;
+        margin-left: .5rem;
+        font-size: .82rem;
+    }
+
+    .asat-public-board .mt-5 {
+        margin-top: .75rem;
+    }
+
+    .asat-workflow-row {
+        grid-template-columns: 1fr;
+        gap: .45rem;
+        padding: .75rem;
+    }
+
+    .asat-public-board .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: .5rem;
+    }
 }

@@ -14,7 +14,9 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->get('/login');
 
-        $response->assertStatus(200);
+        $response->assertStatus(200)
+            ->assertSee("Don't have an account?")
+            ->assertSee('Register');
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void
@@ -49,6 +51,23 @@ class AuthenticationTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $this->assertGuest();
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
+        $this->get('/dashboard')->assertRedirect('/login');
+    }
+
+    public function test_authenticated_pages_send_no_cache_headers(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertHeader('Pragma', 'no-cache');
+
+        $cacheControl = (string) $response->headers->get('Cache-Control');
+
+        $this->assertStringContainsString('no-store', $cacheControl);
+        $this->assertStringContainsString('no-cache', $cacheControl);
+        $this->assertStringContainsString('must-revalidate', $cacheControl);
     }
 }

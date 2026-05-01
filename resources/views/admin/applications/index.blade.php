@@ -1,37 +1,53 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="asat-page-title">
-            {{ __('Admin Applications') }}
-        </h2>
+        <div>
+            <p class="asat-page-kicker">{{ __('Admin Review') }}</p>
+            <h2 class="asat-page-title">
+                {{ __('Admin Applications') }}
+            </h2>
+        </div>
     </x-slot>
 
     <div class="asat-section">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
             @if (session('status'))
-                <div class="rounded-md bg-green-50 p-4 text-sm text-green-700">
+                <div class="asat-alert-success p-4 text-sm font-semibold">
                     {{ __(str_replace('-', ' ', session('status'))) }}
                 </div>
             @endif
 
+            <section class="asat-hero p-6 sm:p-8">
+                <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p class="text-sm font-black uppercase text-white/75">{{ __('Scholarship Approval Board') }}</p>
+                        <h3 class="asat-hero-title mt-3">{{ __('Review pending student applications.') }}</h3>
+                    </div>
+
+                    <a href="{{ route('admin.users.index') }}" class="asat-button bg-white text-[var(--asat-navy)]">
+                        {{ __('Manage users') }}
+                    </a>
+                </div>
+            </section>
+
             <div class="grid gap-4 sm:grid-cols-3">
                 <div class="asat-stat p-6">
-                    <p class="text-sm font-bold uppercase tracking-wider text-slate-500">{{ __('Pending') }}</p>
-                    <p class="mt-2 text-3xl font-extrabold text-[var(--asat-ink)]">{{ $pendingCount }}</p>
+                    <p class="text-sm font-black text-slate-500">{{ __('Pending') }}</p>
+                    <p class="mt-2 text-3xl font-black text-[var(--asat-ink)]">{{ $pendingCount }}</p>
                 </div>
-                <div class="asat-stat p-6">
-                    <p class="text-sm font-bold uppercase tracking-wider text-slate-500">{{ __('Approved') }}</p>
-                    <p class="mt-2 text-3xl font-extrabold text-[var(--asat-ink)]">{{ $approvedCount }}</p>
+                <div class="asat-stat is-sky p-6">
+                    <p class="text-sm font-black text-slate-500">{{ __('Approved') }}</p>
+                    <p class="mt-2 text-3xl font-black text-[var(--asat-ink)]">{{ $approvedCount }}</p>
                 </div>
                 <div class="asat-stat is-red p-6">
-                    <p class="text-sm font-bold uppercase tracking-wider text-slate-500">{{ __('Rejected') }}</p>
-                    <p class="mt-2 text-3xl font-extrabold text-[var(--asat-ink)]">{{ $rejectedCount }}</p>
+                    <p class="text-sm font-black text-slate-500">{{ __('Rejected') }}</p>
+                    <p class="mt-2 text-3xl font-black text-[var(--asat-ink)]">{{ $rejectedCount }}</p>
                 </div>
             </div>
 
             <div class="asat-card">
-                <div class="border-b border-slate-200 px-6 py-5">
-                    <h3 class="text-lg font-extrabold text-[var(--asat-ink)]">Scholarship application review</h3>
-                    <p class="mt-1 text-sm text-slate-600">Pending submissions appear here for approval or rejection.</p>
+                <div class="asat-card-header">
+                    <h3 class="text-lg font-black text-[var(--asat-ink)]">Scholarship application review</h3>
+                    <p class="mt-1 text-sm text-slate-600">Internal and Tally submissions appear in this queue.</p>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -49,9 +65,14 @@
                             @forelse ($applications as $application)
                                 <tr>
                                     <td class="px-6 py-4">
-                                        <div class="font-bold text-slate-900">{{ $application->full_name }}</div>
+                                        <div class="font-black text-slate-900">{{ $application->full_name }}</div>
                                         <div class="text-sm text-slate-500">{{ $application->student_id }}</div>
                                         <div class="text-xs text-slate-500">{{ $application->email }}</div>
+                                        <div class="mt-2">
+                                            <span class="asat-badge {{ $application->tally_submission_id ? 'asat-badge-approved' : 'asat-badge-pending' }}">
+                                                {{ $application->tally_submission_id ? __('Tally submission') : __('Portal submission') }}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-700">{{ $application->course }} - {{ $application->year_level }}</td>
                                     <td class="px-6 py-4 text-sm text-slate-700">{{ $application->scholarship_type }}</td>
@@ -74,19 +95,23 @@
                                                     @csrf
                                                     @method('PATCH')
                                                     <input type="hidden" name="status" value="Rejected">
-                                                    <button type="submit" class="inline-flex items-center rounded-md border border-red-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-red-700 transition hover:bg-red-50">
+                                                    <button type="submit" class="asat-button asat-button-danger">
                                                         {{ __('Reject') }}
                                                     </button>
                                                 </form>
                                             </div>
                                         @else
-                                            <span class="text-sm font-bold text-slate-500">{{ __('Reviewed') }}</span>
+                                            <span class="text-sm font-black text-slate-500">{{ __('Reviewed') }}</span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-8 text-center text-sm text-slate-600">{{ __('No applications yet.') }}</td>
+                                    <td colspan="5" class="px-6 py-8">
+                                        <div class="asat-empty">
+                                            <p class="font-black text-slate-900">{{ __('No applications yet.') }}</p>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -95,22 +120,26 @@
             </div>
 
             <div class="asat-card">
-                <div class="p-6">
-                    <h3 class="text-lg font-extrabold text-[var(--asat-ink)]">{{ __('Recent notifications') }}</h3>
+                <div class="asat-card-header">
+                    <h3 class="text-lg font-black text-[var(--asat-ink)]">{{ __('Recent notifications') }}</h3>
+                </div>
 
-                    <div class="mt-4 divide-y divide-gray-100">
+                <div class="divide-y divide-gray-100">
                         @forelse ($notifications as $notification)
-                            <div class="py-3">
+                            <div class="asat-feed-item {{ $notification->is_read ? '' : 'is-unread' }}">
                                 <div class="flex items-center justify-between gap-3">
-                                    <p class="font-bold text-slate-900">{{ $notification->title }}</p>
-                                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">{{ $notification->status }}</span>
+                                    <p class="font-black text-slate-900">{{ $notification->title }}</p>
+                                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">{{ $notification->status }}</span>
                                 </div>
                                 <p class="mt-1 text-sm text-slate-600">{{ $notification->message }}</p>
                             </div>
                         @empty
-                            <p class="text-sm text-slate-600">{{ __('No notifications yet.') }}</p>
+                            <div class="p-6">
+                                <div class="asat-empty">
+                                    <p class="font-black text-slate-900">{{ __('No notifications yet.') }}</p>
+                                </div>
+                            </div>
                         @endforelse
-                    </div>
                 </div>
             </div>
         </div>

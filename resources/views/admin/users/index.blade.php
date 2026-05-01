@@ -1,22 +1,38 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="asat-page-title">
-            {{ __('Admin Users') }}
-        </h2>
+        <div>
+            <p class="asat-page-kicker">{{ __('Access Control') }}</p>
+            <h2 class="asat-page-title">
+                {{ __('Admin Users') }}
+            </h2>
+        </div>
     </x-slot>
 
     <div class="asat-section">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
             @if (session('status'))
-                <div class="rounded-md bg-green-50 p-4 text-sm text-green-700">
+                <div class="asat-alert-success p-4 text-sm font-semibold">
                     {{ __(str_replace('-', ' ', session('status'))) }}
                 </div>
             @endif
 
+            <section class="asat-hero p-6 sm:p-8">
+                <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p class="text-sm font-black uppercase text-white/75">{{ __('Admin role management') }}</p>
+                        <h3 class="asat-hero-title mt-3">{{ __('Promote trusted users for review access.') }}</h3>
+                    </div>
+
+                    <a href="{{ route('admin.applications.index') }}" class="asat-button bg-white text-[var(--asat-navy)]">
+                        Applications
+                    </a>
+                </div>
+            </section>
+
             <div class="asat-card">
-                <div class="border-b border-slate-200 px-6 py-5">
-                    <h3 class="text-lg font-extrabold text-[var(--asat-ink)]">Role management</h3>
-                    <p class="mt-1 text-sm text-slate-600">Promote registered users to admin or return admins to normal access.</p>
+                <div class="asat-card-header">
+                    <h3 class="text-lg font-black text-[var(--asat-ink)]">Role management</h3>
+                    <p class="mt-1 text-sm text-slate-600">Promote registered users to admin, adjust roles, or safely remove accounts when needed.</p>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -32,7 +48,7 @@
                         <tbody class="divide-y divide-gray-100 bg-white">
                             @forelse ($users as $user)
                                 <tr>
-                                    <td class="px-6 py-4 font-bold text-slate-900">{{ $user->name }}</td>
+                                    <td class="px-6 py-4 font-black text-slate-900">{{ $user->name }}</td>
                                     <td class="px-6 py-4 text-sm text-slate-700">{{ $user->email }}</td>
                                     <td class="px-6 py-4 text-sm text-slate-700">
                                         <span class="asat-badge {{ $user->is_admin ? 'asat-badge-approved' : 'asat-badge-pending' }}">
@@ -40,6 +56,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
+                                        <div class="flex flex-wrap justify-end gap-2">
                                         @if (! $user->is_admin)
                                             <form method="POST" action="{{ route('admin.users.promote', $user) }}" class="inline-flex">
                                                 @csrf
@@ -50,18 +67,33 @@
                                             <form method="POST" action="{{ route('admin.users.demote', $user) }}" class="inline-flex">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="inline-flex items-center rounded-md border border-red-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-red-700 transition hover:bg-red-50">
+                                                <button type="submit" class="asat-button asat-button-danger">
                                                     {{ __('Demote') }}
                                                 </button>
                                             </form>
                                         @else
-                                            <span class="text-sm font-bold text-slate-500">{{ __('Current admin') }}</span>
+                                            <span class="text-sm font-black text-slate-500">{{ __('Current admin') }}</span>
                                         @endif
+
+                                        @if (! auth()->user()->is($user))
+                                            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline-flex" onsubmit="return confirm('Remove this user and their related records? This action cannot be undone.');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="asat-button asat-button-danger">
+                                                    {{ __('Remove') }}
+                                                </button>
+                                            </form>
+                                        @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-8 text-center text-sm text-slate-600">{{ __('No users found.') }}</td>
+                                    <td colspan="4" class="px-6 py-8">
+                                        <div class="asat-empty">
+                                            <p class="font-black text-slate-900">{{ __('No users found.') }}</p>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

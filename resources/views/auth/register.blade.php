@@ -20,10 +20,16 @@
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+            <div class="asat-password-wrap mt-1">
+                <x-text-input id="password" class="block w-full"
+                                type="password"
+                                name="password"
+                                required
+                                autocomplete="new-password"
+                                data-password-strength />
+                <x-password-toggle-button target="password" />
+            </div>
+            <x-password-strength-hint />
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
@@ -32,19 +38,22 @@
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+            <div class="asat-password-wrap mt-1">
+                <x-text-input id="password_confirmation" class="block w-full"
+                                type="password"
+                                name="password_confirmation" required autocomplete="new-password" />
+                <x-password-toggle-button target="password_confirmation" />
+            </div>
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+        <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <a class="text-sm font-bold text-slate-600 hover:text-[var(--asat-teal)] rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
+            <x-primary-button>
                 {{ __('Register') }}
             </x-primary-button>
         </div>

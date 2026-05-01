@@ -1,182 +1,204 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="asat-page-title">
-            {{ __('Dashboard') }}
-        </h2>
+        <div>
+            <p class="asat-page-kicker">{{ auth()->user()->is_admin ? __('Admin Workspace') : __('Student Workspace') }}</p>
+            <h2 class="asat-page-title">
+                {{ __('Dashboard') }}
+            </h2>
+        </div>
     </x-slot>
 
+    @php
+        $user = auth()->user();
+        $isAdmin = $user->is_admin;
+
+        if ($isAdmin) {
+            $totalApplications = \App\Models\Application::count();
+            $pendingApplications = \App\Models\Application::where('status', 'Pending')->count();
+            $approvedApplications = \App\Models\Application::where('status', 'Approved')->count();
+            $rejectedApplications = \App\Models\Application::where('status', 'Rejected')->count();
+            $recentApplications = \App\Models\Application::latest()->limit(4)->get();
+        } else {
+            $totalApplications = $user->applications()->count();
+            $pendingApplications = $user->applications()->where('status', 'Pending')->count();
+            $approvedApplications = $user->applications()->where('status', 'Approved')->count();
+            $recentApplications = $user->applications()->latest()->limit(4)->get();
+            $recentNotifications = $user->notifications()->latest()->limit(4)->get();
+        }
+    @endphp
+
     <div class="asat-section">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            @if(Auth::user()->is_admin)
-                <!-- Admin Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="asat-card p-6">
-                        <div class="flex items-center">
-                            <div class="p-2 bg-blue-100 rounded-lg">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Total Applications</p>
-                                <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Application::count() }}</p>
-                            </div>
-                        </div>
+        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+            <section class="asat-hero p-6 sm:p-8">
+                <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p class="text-sm font-black uppercase text-white/75">
+                            {{ $isAdmin ? __('Scholarship review center') : __('Scholarship account center') }}
+                        </p>
+                        <h3 class="asat-hero-title mt-3">
+                            {{ $isAdmin ? __('Review applications and monitor system activity.') : __('Track your scholarship application progress.') }}
+                        </h3>
+                        <p class="asat-hero-copy mt-4">
+                            {{ $isAdmin ? __('Manage approvals, applicant records, notifications, and admin users from one dashboard.') : __('Submit applications, view status updates, and keep your profile ready for review.') }}
+                        </p>
                     </div>
 
-                    <div class="asat-card p-6">
-                        <div class="flex items-center">
-                            <div class="p-2 bg-yellow-100 rounded-lg">
-                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Pending Review</p>
-                                <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Application::where('status', 'Pending')->count() }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="asat-card p-6">
-                        <div class="flex items-center">
-                            <div class="p-2 bg-green-100 rounded-lg">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Approved</p>
-                                <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Application::where('status', 'Approved')->count() }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="asat-card p-6">
-                        <div class="flex items-center">
-                            <div class="p-2 bg-red-100 rounded-lg">
-                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Rejected</p>
-                                <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Application::where('status', 'Rejected')->count() }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @else
-                <!-- User Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="asat-card p-6">
-                        <div class="flex items-center">
-                            <div class="p-2 bg-blue-100 rounded-lg">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">My Applications</p>
-                                <p class="text-2xl font-bold text-gray-900">{{ Auth::user()->applications()->count() }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="asat-card p-6">
-                        <div class="flex items-center">
-                            <div class="p-2 bg-green-100 rounded-lg">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Approved</p>
-                                <p class="text-2xl font-bold text-gray-900">{{ Auth::user()->applications()->where('status', 'Approved')->count() }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="asat-card p-6">
-                        <div class="flex items-center">
-                            <div class="p-2 bg-yellow-100 rounded-lg">
-                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-600">Pending</p>
-                                <p class="text-2xl font-bold text-gray-900">{{ Auth::user()->applications()->where('status', 'Pending')->count() }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            <div class="asat-card">
-                <div class="grid gap-0 lg:grid-cols-[1.25fr_.75fr]">
-                    <div class="p-8">
-                        <p class="text-sm font-bold uppercase tracking-wider text-[var(--asat-teal)]">Scholarship operations</p>
-                        <h3 class="mt-3 text-2xl font-extrabold text-[var(--asat-ink)]">{{ __('ASATNSS Scholarship Portal') }}</h3>
-                        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">{{ __('Submit scholarship applications, monitor review status, and receive updates from the admin office in one secure dashboard.') }}</p>
-
-                        <div class="mt-6 flex flex-wrap gap-3">
-                            <a href="{{ route('applications.index') }}" class="asat-action-primary inline-flex items-center rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                                {{ __('View applications') }}
+                    <div class="flex flex-col gap-3 sm:flex-row">
+                        @if ($isAdmin)
+                            <a href="{{ route('admin.applications.index') }}" class="asat-button bg-white text-[var(--asat-navy)]">
+                                Review applications
                             </a>
-                            <a href="{{ route('profile.edit') }}" class="inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-widest text-slate-700 transition hover:bg-slate-50">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                                {{ __('Update profile') }}
+                            <a href="{{ route('admin.users.index') }}" class="asat-button border border-white/30 text-white hover:bg-white/10">
+                                Admin users
                             </a>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-200 bg-slate-50 p-8 lg:border-l lg:border-t-0">
-                        <h4 class="text-sm font-extrabold uppercase tracking-wider text-slate-600">System modules</h4>
-                        <div class="mt-5 space-y-4">
-                            <div class="asat-card-muted p-4">
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                    <div>
-                                        <p class="font-bold text-slate-900">Student applications</p>
-                                        <p class="mt-1 text-sm text-slate-600">Form submission and status tracking</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="asat-card-muted p-4">
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h4l4 4v-4h4a2 2 0 002-2z"></path>
-                                    </svg>
-                                    <div>
-                                        <p class="font-bold text-slate-900">Notifications</p>
-                                        <p class="mt-1 text-sm text-slate-600">Status alerts and admin updates</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="asat-card-muted p-4">
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                                    </svg>
-                                    <div>
-                                        <p class="font-bold text-slate-900">Integrations</p>
-                                        <p class="mt-1 text-sm text-slate-600">Tally webhook and Abstract reputation checks</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @else
+                            <a href="{{ route('applications.create') }}" class="asat-button bg-white text-[var(--asat-navy)]">
+                                New application
+                            </a>
+                            <a href="{{ route('applications.index') }}" class="asat-button border border-white/30 text-white hover:bg-white/10">
+                                My applications
+                            </a>
+                        @endif
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <section class="grid gap-4 md:grid-cols-3 {{ $isAdmin ? 'lg:grid-cols-4' : '' }}">
+                <div class="asat-stat p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-black text-slate-500">{{ $isAdmin ? __('Total Applications') : __('My Applications') }}</p>
+                            <p class="mt-2 text-3xl font-black text-[var(--asat-ink)]">{{ $totalApplications }}</p>
+                        </div>
+                        <span class="asat-stat-icon">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="asat-stat is-gold p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-black text-slate-500">{{ __('Pending') }}</p>
+                            <p class="mt-2 text-3xl font-black text-[var(--asat-ink)]">{{ $pendingApplications }}</p>
+                        </div>
+                        <span class="asat-stat-icon bg-yellow-100 text-[var(--asat-gold)]">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="asat-stat is-sky p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-black text-slate-500">{{ __('Approved') }}</p>
+                            <p class="mt-2 text-3xl font-black text-[var(--asat-ink)]">{{ $approvedApplications }}</p>
+                        </div>
+                        <span class="asat-stat-icon bg-sky-100 text-[var(--asat-sky)]">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+
+                @if ($isAdmin)
+                    <div class="asat-stat is-red p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-black text-slate-500">{{ __('Rejected') }}</p>
+                                <p class="mt-2 text-3xl font-black text-[var(--asat-ink)]">{{ $rejectedApplications }}</p>
+                            </div>
+                            <span class="asat-stat-icon bg-red-100 text-[var(--asat-red)]">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                @endif
+            </section>
+
+            <section class="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
+                <div class="asat-card">
+                    <div class="asat-card-header flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-black text-[var(--asat-ink)]">{{ __('Recent Applications') }}</h3>
+                            <p class="mt-1 text-sm text-slate-600">{{ $isAdmin ? __('Latest records in the review queue.') : __('Your latest scholarship submissions.') }}</p>
+                        </div>
+                        <a href="{{ $isAdmin ? route('admin.applications.index') : route('applications.index') }}" class="text-sm font-black text-[var(--asat-teal)] hover:text-[var(--asat-navy)]">
+                            {{ __('View all') }}
+                        </a>
+                    </div>
+
+                    <div class="divide-y divide-slate-100">
+                        @forelse ($recentApplications as $application)
+                            <div class="grid gap-3 p-5 sm:grid-cols-[1fr_auto] sm:items-center">
+                                <div>
+                                    <p class="font-black text-slate-900">{{ $application->full_name }}</p>
+                                    <p class="mt-1 text-sm text-slate-600">{{ $application->scholarship_type }} · {{ $application->course }}</p>
+                                </div>
+                                <span class="asat-badge {{ $application->status === 'Approved' ? 'asat-badge-approved' : ($application->status === 'Rejected' ? 'asat-badge-rejected' : 'asat-badge-pending') }}">
+                                    {{ $application->status }}
+                                </span>
+                            </div>
+                        @empty
+                            <div class="p-5">
+                                <div class="asat-empty">
+                                    <p class="font-black text-slate-900">{{ __('No applications yet') }}</p>
+                                </div>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <div class="asat-card">
+                    <div class="asat-card-header">
+                        <h3 class="text-lg font-black text-[var(--asat-ink)]">{{ $isAdmin ? __('System Modules') : __('Recent Notifications') }}</h3>
+                    </div>
+
+                    @if ($isAdmin)
+                        <div class="space-y-3 p-5">
+                            <div class="asat-module-row">
+                                <p class="font-black text-slate-900">{{ __('Application Review') }}</p>
+                                <p class="mt-1 text-sm text-slate-600">{{ __('Pending, approved, and rejected records.') }}</p>
+                            </div>
+                            <div class="asat-module-row">
+                                <p class="font-black text-slate-900">{{ __('Tally Intake') }}</p>
+                                <p class="mt-1 text-sm text-slate-600">{{ __('External form submissions enter the same queue.') }}</p>
+                            </div>
+                            <div class="asat-module-row">
+                                <p class="font-black text-slate-900">{{ __('Email Reputation') }}</p>
+                                <p class="mt-1 text-sm text-slate-600">{{ __('Abstract API validation runs server-side.') }}</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="divide-y divide-slate-100">
+                            @forelse ($recentNotifications as $notification)
+                                <div class="asat-feed-item {{ $notification->is_read ? '' : 'is-unread' }}">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="font-black text-slate-900">{{ $notification->title }}</p>
+                                            <p class="mt-1 text-sm text-slate-600">{{ $notification->message }}</p>
+                                        </div>
+                                        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">{{ $notification->status }}</span>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="p-5">
+                                    <div class="asat-empty">
+                                        <p class="font-black text-slate-900">{{ __('No notifications yet') }}</p>
+                                    </div>
+                                </div>
+                            @endforelse
+                        </div>
+                    @endif
+                </div>
+            </section>
         </div>
     </div>
 </x-app-layout>

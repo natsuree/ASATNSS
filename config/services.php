@@ -41,6 +41,7 @@ return [
 
     'tally' => [
         'webhook_secret' => env('TALLY_WEBHOOK_SECRET'),
+        'form_url' => env('TALLY_FORM_URL'),
     ],
 
 ];

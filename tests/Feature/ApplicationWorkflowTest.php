@@ -137,7 +137,7 @@ class ApplicationWorkflowTest extends TestCase
 
         $this->withHeader('X-Tally-Webhook-Secret', 'secret-token')
             ->postJson('/api/webhooks/tally', $payload)
-            ->assertCreated();
+            ->assertOk();
 
         $this->withHeader('X-Tally-Webhook-Secret', 'secret-token')
             ->postJson('/api/webhooks/tally', $payload)
@@ -171,13 +171,156 @@ class ApplicationWorkflowTest extends TestCase
         ];
 
         $this->postJson('/api/webhooks/tally?secret=secret-token', $payload)
-            ->assertCreated();
+            ->assertOk();
 
         $this->assertDatabaseHas('applications', [
             'full_name' => 'Geo Clark Calasag',
             'email' => 'geo.external@example.com',
             'status' => Application::STATUS_PENDING,
             'tally_submission_id' => 'tally-query-secret-123',
+        ]);
+    }
+
+    public function test_tally_webhook_accepts_student_number_aliases_and_year_lever_label(): void
+    {
+        config(['services.tally.webhook_secret' => 'secret-token']);
+
+        $payload = [
+            'data' => [
+                'submissionId' => 'tally-aliases-123',
+                'fields' => [
+                    ['label' => 'Full Name', 'value' => 'Alias Student'],
+                    ['label' => 'Email', 'value' => 'alias.student@example.com'],
+                    ['label' => 'Student no.', 'value' => 'S-7788'],
+                    ['label' => 'Course', 'value' => 'BS Information Technology'],
+                    ['label' => 'Year Lever', 'value' => '4th Year'],
+                    ['label' => 'Scholarship Type', 'value' => 'Academic'],
+                    ['label' => 'Reason For Applying', 'value' => 'Alias-based Tally payload.'],
+                ],
+            ],
+        ];
+
+        $this->withHeader('X-Tally-Webhook-Secret', 'secret-token')
+            ->postJson('/api/webhooks/tally', $payload)
+            ->assertOk();
+
+        $this->assertDatabaseHas('applications', [
+            'full_name' => 'Alias Student',
+            'student_id' => 'S-7788',
+            'year_level' => '4th Year',
+            'reason_for_applying' => 'Alias-based Tally payload.',
+        ]);
+    }
+
+    public function test_tally_webhook_submission_is_visible_on_admin_dashboard(): void
+    {
+        config(['services.tally.webhook_secret' => 'secret-token']);
+
+        $admin = User::factory()->admin()->create();
+
+        $payload = [
+            'data' => [
+                'submissionId' => 'tally-admin-dashboard-123',
+                'fields' => [
+                    ['label' => 'Full Name', 'value' => 'Tally Student'],
+                    ['label' => 'Email', 'value' => 'tally.student@example.com'],
+                    ['label' => 'Student ID', 'value' => 'S-3333'],
+                    ['label' => 'Course', 'value' => 'BSCS'],
+                    ['label' => 'Year Level', 'value' => '2nd Year'],
+                    ['label' => 'Scholarship Type', 'value' => 'Academic'],
+                    ['label' => 'Reason for Applying', 'value' => 'External form intake'],
+                ],
+            ],
+        ];
+
+        $this->withHeader('X-Tally-Webhook-Secret', 'secret-token')
+            ->postJson('/api/webhooks/tally', $payload)
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->get('/admin/applications')
+            ->assertOk()
+            ->assertSee('Tally Student')
+            ->assertSee('Tally submission');
+    }
+
+    public function test_tally_webhook_maps_human_readable_values_from_structured_fields(): void
+    {
+        config(['services.tally.webhook_secret' => 'secret-token']);
+
+        $payload = [
+            'data' => [
+                'submissionId' => 'tally-structured-values-123',
+                'fields' => [
+                    ['label' => 'Full Name', 'value' => ['first_name' => 'Ana', 'last_name' => 'Reyes']],
+                    ['label' => 'Email', 'value' => 'ana.structured@example.com'],
+                    ['label' => 'Student ID', 'value' => 'S-5005'],
+                    ['label' => 'Course', 'value' => ['text' => 'BS Information Technology', 'value' => 'bsit-option-id']],
+                    ['label' => 'Year Level', 'value' => [['label' => '4th Year', 'value' => 'year-option-id']]],
+                    ['label' => 'Scholarship Type', 'value' => [['text' => 'Academic', 'value' => 'scholarship-option-id']]],
+                    ['label' => 'Reason for Applying', 'value' => ['label' => 'Need tuition support', 'value' => 'reason-option-id']],
+                ],
+            ],
+        ];
+
+        $this->withHeader('X-Tally-Webhook-Secret', 'secret-token')
+            ->postJson('/api/webhooks/tally', $payload)
+            ->assertOk();
+
+        $this->assertDatabaseHas('applications', [
+            'full_name' => 'Ana Reyes',
+            'email' => 'ana.structured@example.com',
+            'course' => 'BS Information Technology',
+            'year_level' => '4th Year',
+            'scholarship_type' => 'Academic',
+            'reason_for_applying' => 'Need tuition support',
+        ]);
+    }
+
+    public function test_tally_webhook_maps_dropdown_option_ids_to_option_text(): void
+    {
+        config(['services.tally.webhook_secret' => 'secret-token']);
+
+        $payload = [
+            'data' => [
+                'submissionId' => 'tally-option-map-123',
+                'fields' => [
+                    ['label' => 'Full Name', 'value' => 'Option Student'],
+                    ['label' => 'Email', 'value' => 'option.student@example.com'],
+                    ['label' => 'Student ID', 'value' => 'S-6006'],
+                    ['label' => 'Course', 'value' => 'BSIT'],
+                    [
+                        'label' => 'Year Level',
+                        'value' => ['year-4'],
+                        'options' => [
+                            ['id' => 'year-3', 'text' => '3rd Year'],
+                            ['id' => 'year-4', 'text' => '4th Year'],
+                        ],
+                    ],
+                    [
+                        'label' => 'Scholarship Type',
+                        'value' => 'scholarship-academic',
+                        'options' => [
+                            ['id' => 'scholarship-athletic', 'text' => 'Athletic'],
+                            ['id' => 'scholarship-academic', 'text' => 'Academic'],
+                        ],
+                    ],
+                    ['label' => 'Reason for Applying', 'value' => 'Needs external support.'],
+                ],
+            ],
+        ];
+
+        $this->withHeader('X-Tally-Webhook-Secret', 'secret-token')
+            ->postJson('/api/webhooks/tally', $payload)
+            ->assertOk();
+
+        $this->assertDatabaseHas('applications', [
+            'full_name' => 'Option Student',
+            'email' => 'option.student@example.com',
+            'course' => 'BSIT',
+            'year_level' => '4th Year',
+            'scholarship_type' => 'Academic',
+            'reason_for_applying' => 'Needs external support.',
         ]);
     }
 
@@ -197,6 +340,43 @@ class ApplicationWorkflowTest extends TestCase
             'status' => 'Read',
             'is_read' => true,
         ]);
+    }
+
+    public function test_student_cannot_view_another_students_application(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $application = Application::create([
+            'user_id' => $owner->id,
+            'full_name' => 'Owner Student',
+            'email' => 'owner@example.com',
+            'student_id' => 'S-401',
+            'course' => 'BS Information Technology',
+            'year_level' => '3rd Year',
+            'scholarship_type' => 'Academic',
+            'status' => Application::STATUS_PENDING,
+        ]);
+
+        $this->actingAs($otherUser)
+            ->get("/applications/{$application->id}")
+            ->assertForbidden();
+    }
+
+    public function test_student_cannot_mark_another_users_notification_as_read(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $notification = Notification::create([
+            'user_id' => $owner->id,
+            'title' => 'Private notification',
+            'message' => 'Only the owner can mark this as read.',
+        ]);
+
+        $this->actingAs($otherUser)
+            ->patch("/notifications/{$notification->id}")
+            ->assertForbidden();
     }
 
     public function test_validate_email_endpoint_uses_abstract_email_reputation_api(): void
