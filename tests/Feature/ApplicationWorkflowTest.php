@@ -151,6 +151,36 @@ class ApplicationWorkflowTest extends TestCase
         ]);
     }
 
+    public function test_tally_webhook_accepts_secret_from_query_string(): void
+    {
+        config(['services.tally.webhook_secret' => 'secret-token']);
+
+        $payload = [
+            'data' => [
+                'submissionId' => 'tally-query-secret-123',
+                'fields' => [
+                    ['label' => 'Applicant Name', 'value' => 'Geo Clark Calasag'],
+                    ['label' => 'Email', 'value' => 'geo.external@example.com'],
+                    ['label' => 'Student ID', 'value' => 'S-3001'],
+                    ['label' => 'Course', 'value' => 'BS Information Technology'],
+                    ['label' => 'Year', 'value' => '4th Year'],
+                    ['label' => 'Scholarship', 'value' => 'Academic'],
+                    ['label' => 'Reason', 'value' => 'Submitted through external form.'],
+                ],
+            ],
+        ];
+
+        $this->postJson('/api/webhooks/tally?secret=secret-token', $payload)
+            ->assertCreated();
+
+        $this->assertDatabaseHas('applications', [
+            'full_name' => 'Geo Clark Calasag',
+            'email' => 'geo.external@example.com',
+            'status' => Application::STATUS_PENDING,
+            'tally_submission_id' => 'tally-query-secret-123',
+        ]);
+    }
+
     public function test_notifications_can_be_marked_as_read(): void
     {
         $user = User::factory()->create();

@@ -108,8 +108,13 @@ class WebhookController extends Controller
 
         $headerSecret = $request->header('X-Tally-Webhook-Secret');
         $bearerSecret = Str::after($request->header('Authorization', ''), 'Bearer ');
+        $querySecret = $request->query('secret') ?? $request->query('tally_secret');
+        $payloadSecret = $request->input('secret') ?? $request->input('tally_secret') ?? $request->input('webhook_secret');
 
-        return hash_equals($secret, $headerSecret ?? '') || hash_equals($secret, $bearerSecret);
+        return hash_equals($secret, $headerSecret ?? '')
+            || hash_equals($secret, $bearerSecret)
+            || hash_equals($secret, $querySecret ?? '')
+            || hash_equals($secret, $payloadSecret ?? '');
     }
 
     private function extractSubmissionId(array $payload): ?string
@@ -124,10 +129,8 @@ class WebhookController extends Controller
     {
         $fields = collect(data_get($payload, 'data.fields', []))
             ->mapWithKeys(function (array $field) {
-                $label = Str::of(data_get($field, 'label') ?? data_get($field, 'key') ?? data_get($field, 'name') ?? '')
-                    ->lower()
-                    ->replace([' ', '-', '.'], '_')
-                    ->toString();
+                $label = data_get($field, 'label') ?? data_get($field, 'key') ?? data_get($field, 'name') ?? '';
+                $normalizedLabel = $this->normalizeFieldLabel($label);
 
                 $value = data_get($field, 'value');
 
@@ -135,18 +138,46 @@ class WebhookController extends Controller
                     $value = implode(', ', $value);
                 }
 
-                return [$label => $value];
+                return [$normalizedLabel => $value];
             });
 
         return [
-            'full_name' => data_get($payload, 'full_name') ?? data_get($payload, 'data.full_name') ?? $fields->get('full_name') ?? $fields->get('name'),
+            'full_name' => data_get($payload, 'full_name') ?? data_get($payload, 'data.full_name') ?? $this->firstMatchingField($fields, ['full_name', 'name', 'student_name', 'applicant_name']),
             'email' => data_get($payload, 'email') ?? data_get($payload, 'data.email') ?? $fields->get('email'),
             'student_id' => data_get($payload, 'student_id') ?? data_get($payload, 'data.student_id') ?? $fields->get('student_id'),
             'course' => data_get($payload, 'course') ?? data_get($payload, 'data.course') ?? $fields->get('course'),
-            'year_level' => data_get($payload, 'year_level') ?? data_get($payload, 'data.year_level') ?? $fields->get('year_level'),
-            'scholarship_type' => data_get($payload, 'scholarship_type') ?? data_get($payload, 'data.scholarship_type') ?? $fields->get('scholarship_type'),
-            'reason_for_applying' => data_get($payload, 'reason_for_applying') ?? data_get($payload, 'data.reason_for_applying') ?? $fields->get('reason_for_applying'),
+            'year_level' => data_get($payload, 'year_level') ?? data_get($payload, 'data.year_level') ?? $this->firstMatchingField($fields, ['year_level', 'year']),
+            'scholarship_type' => data_get($payload, 'scholarship_type') ?? data_get($payload, 'data.scholarship_type') ?? $this->firstMatchingField($fields, ['scholarship_type', 'scholarship']),
+            'reason_for_applying' => data_get($payload, 'reason_for_applying') ?? data_get($payload, 'data.reason_for_applying') ?? $this->firstMatchingField($fields, ['reason_for_applying', 'reason', 'why_are_you_applying']),
             'tally_submission_id' => $submissionId,
         ];
+    }
+
+    private function normalizeFieldLabel(string $label): string
+    {
+        return Str::of($label)
+            ->lower()
+            ->replaceMatches('/[^a-z0-9]+/', '_')
+            ->trim('_')
+            ->toString();
+    }
+
+    private function firstMatchingField($fields, array $keys): mixed
+    {
+        foreach ($keys as $key) {
+            if ($fields->has($key)) {
+                return $fields->get($key);
+            }
+        }
+
+        foreach ($fields as $key => $value) {
+            foreach ($keys as $expectedKey) {
+                if (str_contains($key, $expectedKey)) {
+                    return $value;
+                }
+            }
+        }
+
+        return null;
     }
 }

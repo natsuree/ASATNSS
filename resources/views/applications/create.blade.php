@@ -1,15 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="asat-page-title">
             {{ __('New Scholarship Application') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="asat-section">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="asat-card">
                 <form method="POST" action="{{ route('applications.store') }}" class="p-6 space-y-6">
                     @csrf
+
+                    <div class="border-b border-slate-200 pb-5">
+                        <p class="text-sm font-bold uppercase tracking-wider text-[var(--asat-teal)]">Student intake</p>
+                        <h3 class="mt-2 text-xl font-extrabold text-[var(--asat-ink)]">Scholarship application form</h3>
+                        <p class="mt-1 text-sm text-slate-600">Application details are validated before review and routed to the admin dashboard.</p>
+                    </div>
 
                     <div class="grid gap-6 sm:grid-cols-2">
                         <div>
@@ -38,7 +44,7 @@
 
                         <div>
                             <x-input-label for="year_level" :value="__('Year level')" />
-                            <select id="year_level" name="year_level" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                            <select id="year_level" name="year_level" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500" required>
                                 @foreach (['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year'] as $year)
                                     <option value="{{ $year }}" @selected(old('year_level') === $year)>{{ $year }}</option>
                                 @endforeach
@@ -48,7 +54,7 @@
 
                         <div>
                             <x-input-label for="scholarship_type" :value="__('Scholarship type')" />
-                            <select id="scholarship_type" name="scholarship_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                            <select id="scholarship_type" name="scholarship_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500" required>
                                 @foreach (['Academic', 'Financial Assistance', 'Athletic', 'Leadership'] as $type)
                                     <option value="{{ $type }}" @selected(old('scholarship_type') === $type)>{{ $type }}</option>
                                 @endforeach
@@ -59,7 +65,7 @@
 
                     <div>
                         <x-input-label for="reason_for_applying" :value="__('Reason for applying')" />
-                        <textarea id="reason_for_applying" name="reason_for_applying" rows="6" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('reason_for_applying') }}</textarea>
+                        <textarea id="reason_for_applying" name="reason_for_applying" rows="6" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500">{{ old('reason_for_applying') }}</textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('reason_for_applying')" />
                     </div>
 

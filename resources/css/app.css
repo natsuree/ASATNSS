@@ -3,3 +3,194 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --asat-ink: #17233b;
+    --asat-muted: #64748b;
+    --asat-line: #d9e2ec;
+    --asat-paper: #ffffff;
+    --asat-page: #f4f7fb;
+    --asat-navy: #183153;
+    --asat-teal: #0f766e;
+    --asat-gold: #c99728;
+    --asat-red: #b42318;
+    --asat-green: #157347;
+}
+
+body {
+    color: var(--asat-ink);
+    background:
+        linear-gradient(180deg, #eef6f6 0, #f7fafc 310px, var(--asat-page) 100%),
+        repeating-linear-gradient(135deg, rgba(24, 49, 83, .04) 0, rgba(24, 49, 83, .04) 1px, transparent 1px, transparent 18px);
+}
+
+.asat-shell {
+    min-height: 100vh;
+    background:
+        linear-gradient(180deg, rgba(15, 118, 110, .08), transparent 280px),
+        var(--asat-page);
+}
+
+.asat-nav {
+    border-bottom: 1px solid rgba(24, 49, 83, .12);
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 8px 28px rgba(24, 49, 83, .06);
+}
+
+.asat-brand-mark {
+    display: inline-grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 10px;
+    background: var(--asat-navy);
+    color: #fff;
+    font-weight: 800;
+}
+
+.asat-brand-title {
+    color: var(--asat-ink);
+    font-size: .95rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.asat-brand-subtitle {
+    color: var(--asat-muted);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+}
+
+.asat-page-header {
+    border-bottom: 1px solid rgba(24, 49, 83, .10);
+    background:
+        linear-gradient(90deg, rgba(24, 49, 83, .08), rgba(15, 118, 110, .07), rgba(201, 151, 40, .08)),
+        #fff;
+}
+
+.asat-page-title {
+    color: var(--asat-ink);
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.asat-section {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+}
+
+.asat-card {
+    overflow: hidden;
+    border: 1px solid rgba(24, 49, 83, .10);
+    border-radius: 8px;
+    background: var(--asat-paper);
+    box-shadow: 0 16px 40px rgba(24, 49, 83, .08);
+}
+
+.asat-card-muted {
+    border: 1px solid rgba(24, 49, 83, .10);
+    border-radius: 8px;
+    background: #f8fbfd;
+}
+
+.asat-stat {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(24, 49, 83, .10);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(24, 49, 83, .07);
+}
+
+.asat-stat::before {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 5px;
+    content: "";
+    background: var(--asat-teal);
+}
+
+.asat-stat.is-gold::before {
+    background: var(--asat-gold);
+}
+
+.asat-stat.is-red::before {
+    background: var(--asat-red);
+}
+
+.asat-table thead {
+    background: #eef5f7;
+}
+
+.asat-table th {
+    color: #334155;
+    font-weight: 800;
+    letter-spacing: .04em;
+}
+
+.asat-table tbody tr:hover {
+    background: #f8fbfd;
+}
+
+.asat-badge {
+    display: inline-flex;
+    align-items: center;
+    min-width: 82px;
+    justify-content: center;
+    border-radius: 999px;
+    padding: .28rem .65rem;
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+.asat-badge-pending {
+    border: 1px solid rgba(201, 151, 40, .35);
+    background: #fff8e6;
+    color: #7a560c;
+}
+
+.asat-badge-approved {
+    border: 1px solid rgba(21, 115, 71, .28);
+    background: #eaf7ef;
+    color: #13633e;
+}
+
+.asat-badge-rejected {
+    border: 1px solid rgba(180, 35, 24, .28);
+    background: #fff1f0;
+    color: #9f2016;
+}
+
+.asat-action-primary {
+    background: var(--asat-navy) !important;
+}
+
+.asat-action-primary:hover {
+    background: #0f223c !important;
+}
+
+.asat-auth-shell {
+    min-height: 100vh;
+    background:
+        linear-gradient(135deg, rgba(24, 49, 83, .94), rgba(15, 118, 110, .90)),
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, .08) 0, rgba(255, 255, 255, .08) 1px, transparent 1px, transparent 22px);
+}
+
+.asat-auth-panel {
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 28px 70px rgba(2, 8, 23, .25);
+}
+
+.asat-auth-copy {
+    color: rgba(255, 255, 255, .92);
+}
+
+input,
+select,
+textarea {
+    border-radius: 7px !important;
+}
