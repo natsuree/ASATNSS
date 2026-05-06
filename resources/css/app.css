@@ -408,6 +408,202 @@ textarea:focus {
     color: var(--asat-ink);
 }
 
+.asat-auth-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.asat-auth-card {
+    width: min(100%, 430px);
+    border: 1px solid rgba(255, 255, 255, .26);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .97);
+    padding: clamp(1.35rem, 4vw, 2rem);
+    box-shadow: 0 34px 84px rgba(2, 8, 23, .30);
+}
+
+.asat-auth-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .8rem;
+    margin-bottom: 1.35rem;
+    color: var(--asat-ink);
+    text-decoration: none;
+}
+
+.asat-auth-brand-title {
+    display: block;
+    color: var(--asat-ink);
+    font-size: 1.05rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.asat-auth-brand-subtitle {
+    display: block;
+    margin-top: .16rem;
+    color: #64748b;
+    font-size: .76rem;
+    font-weight: 700;
+}
+
+.asat-auth-card-head {
+    margin-bottom: 1.4rem;
+    text-align: center;
+}
+
+.asat-auth-card-head h1 {
+    max-width: 23rem;
+    margin: .35rem auto 0;
+    color: var(--asat-ink);
+    font-size: clamp(1.2rem, 3vw, 1.45rem);
+    font-weight: 900;
+    line-height: 1.25;
+}
+
+.asat-auth-card form .asat-button-primary {
+    min-width: 7.5rem;
+}
+
+.asat-auth-card label {
+    font-weight: 800;
+}
+
+.asat-public-home {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    color: #fff;
+    background:
+        linear-gradient(135deg, rgba(11, 32, 55, .98), rgba(18, 50, 79, .95) 42%, rgba(8, 117, 111, .92)),
+        linear-gradient(90deg, rgba(255, 255, 255, .055) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255, 255, 255, .045) 1px, transparent 1px);
+    background-size: auto, 54px 54px, 54px 54px;
+}
+
+.asat-public-home-nav {
+    border-bottom: 1px solid rgba(255, 255, 255, .14);
+    background: rgba(3, 18, 32, .12);
+    backdrop-filter: blur(14px);
+}
+
+.asat-public-brand-title {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.asat-public-brand-subtitle {
+    color: rgba(255, 255, 255, .72);
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+.asat-public-link {
+    color: rgba(255, 255, 255, .78);
+    font-size: .85rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: color .18s ease;
+}
+
+.asat-public-link:hover {
+    color: #fff;
+}
+
+.asat-public-home-main {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    padding: clamp(3.5rem, 9vw, 7rem) 0;
+}
+
+.asat-public-home-hero {
+    width: 100%;
+}
+
+.asat-public-intro {
+    max-width: 790px;
+}
+
+.asat-public-kicker {
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, .76);
+    font-size: .8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.asat-public-intro h1 {
+    max-width: 900px;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(2.35rem, 6vw, 4.85rem);
+    font-weight: 900;
+    line-height: .98;
+}
+
+.asat-public-intro p:not(.asat-public-kicker) {
+    max-width: 690px;
+    margin: 1.35rem 0 0;
+    color: rgba(255, 255, 255, .84);
+    font-size: clamp(1rem, 1.6vw, 1.15rem);
+    line-height: 1.85;
+}
+
+.asat-public-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .85rem;
+    margin-top: 1.9rem;
+}
+
+.asat-button-light {
+    border: 1px solid rgba(255, 255, 255, .25);
+    background: #fff;
+    color: var(--asat-navy);
+    box-shadow: 0 16px 34px rgba(2, 8, 23, .22);
+}
+
+.asat-button-light:hover {
+    background: #f8fbfc;
+    color: var(--asat-navy-deep);
+}
+
+.asat-button-outline-light {
+    border: 1px solid rgba(255, 255, 255, .32);
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+}
+
+.asat-button-outline-light:hover {
+    border-color: rgba(255, 255, 255, .55);
+    background: rgba(255, 255, 255, .14);
+    color: #fff;
+}
+
+.asat-public-home-footer {
+    border-top: 1px solid rgba(255, 255, 255, .12);
+    padding: 1.15rem 0;
+    color: rgba(255, 255, 255, .72);
+    font-size: .9rem;
+    font-weight: 700;
+}
+
+.asat-public-home-footer a {
+    color: rgba(255, 255, 255, .78);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.asat-public-home-footer a:hover {
+    color: #fff;
+}
+
 body.asat-public-page {
     overflow-x: hidden;
     background:

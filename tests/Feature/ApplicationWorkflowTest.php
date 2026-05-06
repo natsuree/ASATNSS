@@ -22,12 +22,16 @@ class ApplicationWorkflowTest extends TestCase
 
     public function test_student_can_submit_multiple_scholarship_applications(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'name' => 'Juan Account Name',
+            'email' => 'juan.account@example.com',
+            'student_id' => '1000',
+        ]);
 
         $payload = [
-            'full_name' => 'Juan Dela Cruz',
-            'email' => 'juan@example.com',
-            'student_id' => 'S-1001',
+            'full_name' => 'Forged Student Name',
+            'email' => 'forged-email@example.com',
+            'student_id' => '2026-1001',
             'course' => 'BS Information Technology',
             'year_level' => '3rd Year',
             'scholarship_type' => 'Academic',
@@ -44,10 +48,72 @@ class ApplicationWorkflowTest extends TestCase
         ])->assertSessionHasNoErrors();
 
         $this->assertDatabaseCount('applications', 2);
+        $this->assertDatabaseHas('applications', [
+            'user_id' => $user->id,
+            'full_name' => 'Juan Account Name',
+            'email' => 'juan.account@example.com',
+            'student_id' => '2026-1001',
+            'scholarship_type' => 'Academic',
+        ]);
+        $this->assertDatabaseHas('applications', [
+            'user_id' => $user->id,
+            'full_name' => 'Juan Account Name',
+            'email' => 'juan.account@example.com',
+            'student_id' => '2026-1001',
+            'scholarship_type' => 'Leadership',
+        ]);
+        $this->assertDatabaseMissing('applications', [
+            'full_name' => 'Forged Student Name',
+            'email' => 'forged-email@example.com',
+        ]);
         $this->assertDatabaseHas('notifications', [
             'user_id' => $user->id,
             'title' => 'Application submitted',
             'is_read' => false,
+        ]);
+    }
+
+    public function test_application_form_displays_account_identity_fields_as_read_only(): void
+    {
+        $student = User::factory()->create([
+            'name' => 'Locked Student Name',
+            'email' => 'locked.student@example.com',
+            'student_id' => '123456',
+        ]);
+
+        $this->actingAs($student)
+            ->get('/applications/create')
+            ->assertOk()
+            ->assertSee('value="Locked Student Name"', false)
+            ->assertSee('value="locked.student@example.com"', false)
+            ->assertSee('value="123456"', false)
+            ->assertSee('id="full_name"', false)
+            ->assertSee('id="email"', false)
+            ->assertSee('id="student_id"', false)
+            ->assertSee('name="student_id"', false)
+            ->assertSee('pattern="[0-9\-]+"', false)
+            ->assertSee("Student Number must contain only numbers and '-' (no letters).")
+            ->assertSee('readonly', false)
+            ->assertDontSee('name="full_name"', false)
+            ->assertDontSee('name="email"', false);
+    }
+
+    public function test_application_rejects_student_number_with_letters(): void
+    {
+        $student = User::factory()->create(['student_id' => null]);
+
+        $this->actingAs($student)
+            ->post('/applications', [
+                'student_id' => 'ABC-123',
+                'course' => 'BS Information Technology',
+                'year_level' => '3rd Year',
+                'scholarship_type' => 'Academic',
+                'reason_for_applying' => 'Needs an account student ID.',
+            ])
+            ->assertSessionHasErrors('student_id');
+
+        $this->assertDatabaseMissing('applications', [
+            'student_id' => 'ABC-123',
         ]);
     }
 
@@ -58,6 +124,82 @@ class ApplicationWorkflowTest extends TestCase
 
         $this->actingAs($student)->get('/admin/applications')->assertRedirect('/dashboard');
         $this->actingAs($admin)->get('/admin/applications')->assertOk();
+    }
+
+    public function test_admin_is_redirected_from_student_application_routes(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $existingApplication = Application::create([
+            'user_id' => $admin->id,
+            'full_name' => 'Admin Owned Record',
+            'email' => 'admin-owned@example.com',
+            'student_id' => 'ADMIN-OLD',
+            'course' => 'BS Information Technology',
+            'year_level' => '4th Year',
+            'scholarship_type' => 'Academic',
+            'status' => Application::STATUS_PENDING,
+        ]);
+
+        $payload = [
+            'full_name' => 'Admin Submission',
+            'email' => 'admin-submit@example.com',
+            'student_id' => 'S-ADMIN-FORM',
+            'course' => 'BS Information Technology',
+            'year_level' => '4th Year',
+            'scholarship_type' => 'Academic',
+            'reason_for_applying' => 'Admins should not submit this form.',
+        ];
+
+        $this->actingAs($admin)->get('/applications')->assertRedirect('/admin/applications');
+        $this->actingAs($admin)->get('/applications/create')->assertRedirect('/admin/applications');
+        $this->actingAs($admin)->post('/applications', $payload)->assertRedirect('/admin/applications');
+        $this->actingAs($admin)->delete("/applications/{$existingApplication->id}")->assertRedirect('/admin/applications');
+
+        $this->assertDatabaseCount('applications', 1);
+        $this->assertDatabaseMissing('applications', ['student_id' => 'S-ADMIN-FORM']);
+        $this->assertDatabaseHas('applications', ['id' => $existingApplication->id]);
+    }
+
+    public function test_student_can_access_application_area_and_withdraw_pending_application(): void
+    {
+        $student = User::factory()->create();
+        $application = Application::create([
+            'user_id' => $student->id,
+            'full_name' => 'Student Applicant',
+            'email' => 'student-applicant@example.com',
+            'student_id' => 'S-STUDENT-001',
+            'course' => 'BS Information Technology',
+            'year_level' => '3rd Year',
+            'scholarship_type' => 'Academic',
+            'status' => Application::STATUS_PENDING,
+        ]);
+
+        $this->actingAs($student)->get('/applications')->assertOk();
+        $this->actingAs($student)->get('/applications/create')->assertOk();
+        $this->actingAs($student)->delete("/applications/{$application->id}")
+            ->assertRedirect('/applications')
+            ->assertSessionHas('status', 'application-deleted');
+
+        $this->assertDatabaseMissing('applications', ['id' => $application->id]);
+    }
+
+    public function test_role_based_navigation_hides_cross_role_application_links(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $student = User::factory()->create();
+
+        $this->actingAs($admin)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertSee('href="http://localhost/admin/applications"', false)
+            ->assertDontSee('href="http://localhost/applications"', false)
+            ->assertDontSee('New application');
+
+        $this->actingAs($student)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertSee('href="http://localhost/applications"', false)
+            ->assertDontSee('href="http://localhost/admin/applications"', false);
     }
 
     public function test_admin_can_update_application_status_and_notify_student(): void
@@ -88,6 +230,89 @@ class ApplicationWorkflowTest extends TestCase
         $this->assertDatabaseHas('notifications', [
             'user_id' => $student->id,
             'title' => 'Application Approved',
+        ]);
+    }
+
+    public function test_admin_review_displays_reason_and_read_only_applicant_details(): void
+    {
+        $student = User::factory()->create();
+        $admin = User::factory()->admin()->create();
+
+        Application::create([
+            'user_id' => $student->id,
+            'full_name' => 'Reasoned Applicant',
+            'email' => 'reasoned@example.com',
+            'student_id' => 'S-REASON-001',
+            'course' => 'BS Information Technology',
+            'year_level' => '3rd Year',
+            'scholarship_type' => 'Academic',
+            'reason_for_applying' => "Tuition support is needed.\nThis helps me stay enrolled.",
+            'status' => Application::STATUS_PENDING,
+        ]);
+
+        Application::create([
+            'user_id' => $student->id,
+            'full_name' => 'No Reason Applicant',
+            'email' => 'no-reason@example.com',
+            'student_id' => 'S-REASON-002',
+            'course' => 'BS Education',
+            'year_level' => '2nd Year',
+            'scholarship_type' => 'Financial Assistance',
+            'reason_for_applying' => null,
+            'status' => Application::STATUS_PENDING,
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/admin/applications')
+            ->assertOk()
+            ->assertSee('Applicant Information')
+            ->assertSee('Reason for Applying')
+            ->assertSee('Tuition support is needed.')
+            ->assertSee('This helps me stay enrolled.')
+            ->assertSee('No reason provided.')
+            ->assertSee('Reasoned Applicant')
+            ->assertSee('S-REASON-001')
+            ->assertDontSee('name="full_name"', false)
+            ->assertDontSee('name="student_id"', false);
+    }
+
+    public function test_admin_status_update_cannot_modify_applicant_identity_fields(): void
+    {
+        $student = User::factory()->create();
+        $admin = User::factory()->admin()->create();
+        $application = Application::create([
+            'user_id' => $student->id,
+            'full_name' => 'Original Applicant',
+            'email' => 'original@example.com',
+            'student_id' => 'S-ORIGINAL-001',
+            'course' => 'BS Information Technology',
+            'year_level' => '4th Year',
+            'scholarship_type' => 'Academic',
+            'reason_for_applying' => 'Original submitted reason.',
+            'status' => Application::STATUS_PENDING,
+        ]);
+
+        $this->actingAs($admin)
+            ->patch("/admin/applications/{$application->id}", [
+                'status' => Application::STATUS_REJECTED,
+                'full_name' => 'Changed Applicant',
+                'student_id' => 'S-CHANGED-999',
+            ])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/admin/applications');
+
+        $this->assertDatabaseHas('applications', [
+            'id' => $application->id,
+            'full_name' => 'Original Applicant',
+            'student_id' => 'S-ORIGINAL-001',
+            'reason_for_applying' => 'Original submitted reason.',
+            'status' => Application::STATUS_REJECTED,
+        ]);
+
+        $this->assertDatabaseMissing('applications', [
+            'id' => $application->id,
+            'full_name' => 'Changed Applicant',
+            'student_id' => 'S-CHANGED-999',
         ]);
     }
 

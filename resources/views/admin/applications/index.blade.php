@@ -63,10 +63,10 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100 bg-white">
                             @forelse ($applications as $application)
-                                <tr>
+                                <tr class="align-top">
                                     <td class="px-6 py-4">
                                         <div class="font-black text-slate-900">{{ $application->full_name }}</div>
-                                        <div class="text-sm text-slate-500">{{ $application->student_id }}</div>
+                                        <div class="text-sm text-slate-500">{{ __('Student ID') }}: {{ $application->student_id }}</div>
                                         <div class="text-xs text-slate-500">{{ $application->email }}</div>
                                         <div class="mt-2">
                                             <span class="asat-badge {{ $application->tally_submission_id ? 'asat-badge-approved' : 'asat-badge-pending' }}">
@@ -103,6 +103,38 @@
                                         @else
                                             <span class="text-sm font-black text-slate-500">{{ __('Reviewed') }}</span>
                                         @endif
+                                    </td>
+                                </tr>
+                                <tr class="bg-slate-50/70">
+                                    <td colspan="5" class="px-6 py-5">
+                                        <div class="grid gap-4 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]">
+                                            <section class="border-l-4 border-[var(--asat-teal)] bg-white p-4">
+                                                <h4 class="text-sm font-black uppercase tracking-wider text-slate-500">{{ __('Applicant Information') }}</h4>
+                                                <dl class="mt-3 grid gap-3 sm:grid-cols-2">
+                                                    <div>
+                                                        <dt class="text-xs font-black uppercase tracking-wider text-slate-500">{{ __('Full Name') }}</dt>
+                                                        <dd class="mt-1 break-words text-sm font-semibold text-slate-900">{{ $application->full_name }}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt class="text-xs font-black uppercase tracking-wider text-slate-500">{{ __('Student ID') }}</dt>
+                                                        <dd class="mt-1 break-words text-sm font-semibold text-slate-900">{{ $application->student_id }}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt class="text-xs font-black uppercase tracking-wider text-slate-500">{{ __('Email') }}</dt>
+                                                        <dd class="mt-1 break-words text-sm font-semibold text-slate-900">{{ $application->email }}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt class="text-xs font-black uppercase tracking-wider text-slate-500">{{ __('Submitted Through') }}</dt>
+                                                        <dd class="mt-1 text-sm font-semibold text-slate-900">{{ $application->tally_submission_id ? __('Tally') : __('Portal') }}</dd>
+                                                    </div>
+                                                </dl>
+                                            </section>
+
+                                            <section class="border-l-4 border-[var(--asat-gold)] bg-white p-4">
+                                                <h4 class="text-sm font-black uppercase tracking-wider text-slate-500">{{ __('Reason for Applying') }}</h4>
+                                                <p class="mt-3 whitespace-pre-line break-words text-sm leading-6 text-slate-700">{{ filled($application->reason_for_applying) ? $application->reason_for_applying : __('No reason provided.') }}</p>
+                                            </section>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

@@ -29,19 +29,20 @@
                             <div class="grid gap-6 sm:grid-cols-2">
                                 <div>
                                     <x-input-label for="full_name" :value="__('Full name')" />
-                                    <x-text-input id="full_name" name="full_name" type="text" class="mt-1 block w-full" :value="old('full_name', auth()->user()->name)" required autofocus />
+                                    <x-text-input id="full_name" type="text" class="mt-1 block w-full bg-slate-100 text-slate-700" :value="auth()->user()->name" readonly required autofocus />
                                     <x-input-error class="mt-2" :messages="$errors->get('full_name')" />
                                 </div>
 
                                 <div>
                                     <x-input-label for="email" :value="__('Email')" />
-                                    <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', auth()->user()->email)" required />
+                                    <x-text-input id="email" type="email" class="mt-1 block w-full bg-slate-100 text-slate-700" :value="auth()->user()->email" readonly required />
                                     <x-input-error class="mt-2" :messages="$errors->get('email')" />
                                 </div>
 
                                 <div>
-                                    <x-input-label for="student_id" :value="__('Student ID')" />
-                                    <x-text-input id="student_id" name="student_id" type="text" class="mt-1 block w-full" :value="old('student_id')" required />
+                                    <x-input-label for="student_id" :value="__('Student Number')" />
+                                    <x-text-input id="student_id" name="student_id" type="text" inputmode="numeric" pattern="[0-9\-]+" title="Student Number must contain only numbers and '-' (no letters)." class="mt-1 block w-full" :value="old('student_id', auth()->user()->student_id)" oninput="this.value = this.value.replace(/[^0-9-]/g, '')" required />
+                                    <p class="mt-1 text-xs font-semibold text-slate-500">{{ __("Student Number must contain only numbers and '-' (no letters).") }}</p>
                                     <x-input-error class="mt-2" :messages="$errors->get('student_id')" />
                                 </div>
 

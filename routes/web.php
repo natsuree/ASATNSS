@@ -31,11 +31,13 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified', 'no.cache'])->name('dashboard');
 
 Route::middleware(['auth', 'no.cache'])->group(function () {
-    Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
-    Route::get('/applications/create', [ApplicationController::class, 'create'])->name('applications.create');
-    Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
-    Route::get('/applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
-    Route::delete('/applications/{application}', [ApplicationController::class, 'destroy'])->name('applications.destroy');
+    Route::middleware('user.only')->group(function () {
+        Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
+        Route::get('/applications/create', [ApplicationController::class, 'create'])->name('applications.create');
+        Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
+        Route::get('/applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
+        Route::delete('/applications/{application}', [ApplicationController::class, 'destroy'])->name('applications.destroy');
+    });
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{notification}', [NotificationController::class, 'update'])->name('notifications.update');

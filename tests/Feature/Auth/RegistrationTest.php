@@ -21,12 +21,17 @@ class RegistrationTest extends TestCase
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'student_id' => 'S-REGISTER-001',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
         ]);
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertDatabaseHas('users', [
+            'email' => 'test@example.com',
+            'student_id' => 'S-REGISTER-001',
+        ]);
     }
 
     public function test_weak_passwords_are_rejected_during_registration(): void
@@ -34,6 +39,7 @@ class RegistrationTest extends TestCase
         $response = $this->from('/register')->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'student_id' => 'S-REGISTER-002',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
